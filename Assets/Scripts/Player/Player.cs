@@ -1,4 +1,5 @@
 using System.Collections;
+using TonyLearning.ShootingGame.Audio;
 using TonyLearning.ShootingGame.Characters;
 using TonyLearning.ShootingGame.Input;
 using TonyLearning.ShootingGame.Miscs;
@@ -39,8 +40,33 @@ namespace TonyLearning.ShootingGame.Player
         [SerializeField] private Transform muzzleMiddle;
         [SerializeField] private Transform muzzleTop;
         [SerializeField] private Transform muzzleBottom;
+        [SerializeField] private AudioData AD_projectileSFX;
+        
         [SerializeField, Range(0,2)] private int weaponPower = 0;
         [SerializeField] private float fireInterval = 0.2f;
+
+        [Header("--- DODGE ---")] 
+        [SerializeField] AudioData AD_dodgeSFX;
+        [SerializeField,Range(0,100)] private int dodgeEnergyCost = 25;
+
+        private bool isDodging = false;
+
+        [SerializeField] private float maxRoll = 720f;
+        [SerializeField] private float rollSpeed = 360f;
+        [SerializeField] private Vector3 dodgeScale = new Vector3(0.5f, 0.5f, 0.5f);
+        
+        private float currentRoll;
+
+        private float dodgeDurration;
+
+        float t;
+        Vector2 previousVelocity;
+        Quaternion previousRotation;
+
+        WaitForFixedUpdate _waitForFixedUpdate = new WaitForFixedUpdate();
+        
+        
+        private Collider2D _collider2D;
         
         WaitForSeconds waitForFireInterval;
         private WaitForSeconds waitHealthRegenerateTime;
@@ -51,6 +77,8 @@ namespace TonyLearning.ShootingGame.Player
         private void Awake()
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
+            _collider2D = GetComponent<Collider2D>();
+            dodgeDurration = maxRoll / rollSpeed;
         }
 
         private void Start()
@@ -106,16 +134,74 @@ namespace TonyLearning.ShootingGame.Player
             _input.onStopMove += StopMove;
             _input.onFire += Fire;
             _input.onStopFire += StopFire;
+            _input.onDodge += Dodge;
         }
 
-        private void OnDisable()
+       private void OnDisable()
         {
             _input.onMove -= Move;
             _input.onStopMove -= StopMove;
             _input.onFire -= Fire;
             _input.onStopFire -= StopFire;
+            _input.onDodge -= Dodge;
         }
-        
+
+       #region DODGE
+
+       private void Dodge()
+       {
+            if(isDodging || !PlayerEnergy.Instance.IsEnoughEnergy(dodgeEnergyCost)) return;
+            StartCoroutine(nameof(DodgeCoroutine));
+           
+
+           //Change player's scale
+       }
+
+       IEnumerator DodgeCoroutine()
+       {
+           isDodging = true;
+           AudioManager.Instance.PlayRandomSFX(AD_dodgeSFX);
+           // Cost energy
+           PlayerEnergy.Instance.UseEnergy(dodgeEnergyCost);
+           //Make player invincible
+           _collider2D.isTrigger = true;
+
+           //Make player rotate along x axis x
+           currentRoll = 0f;
+
+           var scale = transform.localScale;
+           
+           while (currentRoll < maxRoll)
+           {
+               currentRoll += rollSpeed * Time.deltaTime;
+               transform.rotation = Quaternion.AngleAxis(currentRoll, Vector3.right);
+
+               if (currentRoll < maxRoll / 2f)
+               {
+                   // scale -= (Time.deltaTime / dodgeDurration) * Vector3.one;
+                   scale.x = Mathf.Clamp(scale.x - Time.deltaTime / dodgeDurration, dodgeScale.x, 1f);
+                   scale.y = Mathf.Clamp(scale.y - Time.deltaTime / dodgeDurration, dodgeScale.y, 1f);
+                   scale.z = Mathf.Clamp(scale.z - Time.deltaTime / dodgeDurration, dodgeScale.z, 1f);
+               }
+               
+               else
+               {
+                   // scale += (Time.deltaTime / dodgeDurration) * Vector3.one;
+                   scale.x = Mathf.Clamp(scale.x + Time.deltaTime / dodgeDurration, dodgeScale.x, 1f);
+                   scale.y = Mathf.Clamp(scale.y + Time.deltaTime / dodgeDurration, dodgeScale.y, 1f);
+                   scale.z = Mathf.Clamp(scale.z + Time.deltaTime / dodgeDurration, dodgeScale.z, 1f);
+               }
+
+               transform.localScale = scale;
+               
+               yield return null;
+           }
+           _collider2D.isTrigger = false;
+           isDodging = false;
+       }
+
+       #endregion
+             
 
 
         #region Move
@@ -135,7 +221,7 @@ namespace TonyLearning.ShootingGame.Player
             Quaternion moveRotation = Quaternion.AngleAxis(moveRotationAngle * moveInput.y, Vector3.right);
             
             moveCoroutine = StartCoroutine(MoveCoroutine(accelerationTime, moveInput.normalized * moveSpeed, moveRotation));
-            StartCoroutine(MovePositionLimitCoroutine());
+            StartCoroutine(nameof(MovePositionLimitCoroutine));
         }
         
         private void StopMove()
@@ -149,7 +235,7 @@ namespace TonyLearning.ShootingGame.Player
                 StopCoroutine(moveCoroutine);
             }
             moveCoroutine = StartCoroutine(MoveCoroutine(decelerationTime, Vector2.zero, Quaternion.identity));
-            StopCoroutine(MovePositionLimitCoroutine());
+            StopCoroutine(nameof(MovePositionLimitCoroutine));
         }
         
 
@@ -180,15 +266,17 @@ namespace TonyLearning.ShootingGame.Player
 
         IEnumerator MoveCoroutine(float time, Vector2 moveVelocity, Quaternion moveRotation)
         {
-            float t = 0;
+            t = 0;
+            previousVelocity = _rigidbody2D.velocity;
+            previousRotation = transform.rotation;
 
             while (t < 1f)
             {
                 t += Time.fixedDeltaTime / time;
-                _rigidbody2D.velocity = Vector2.Lerp(_rigidbody2D.velocity, moveVelocity, t);
-                transform.rotation = Quaternion.Lerp(transform.rotation, moveRotation, t);
+                _rigidbody2D.velocity = Vector2.Lerp(previousVelocity, moveVelocity, t);
+                transform.rotation = Quaternion.Lerp(previousRotation, moveRotation, t);
 
-                yield return null;
+                yield return _waitForFixedUpdate;
             }
             // while (t < time)
             // {
@@ -245,7 +333,7 @@ namespace TonyLearning.ShootingGame.Player
                         break;
                 
                 }
-                
+                AudioManager.Instance.PlayRandomSFX(AD_projectileSFX);
                 yield return waitForFireInterval;;
             }
         }

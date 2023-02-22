@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using TonyLearning.ShootingGame.Audio;
 using TonyLearning.ShootingGame.Pool_System;
 using TonyLearning.ShootingGame.UI;
 using UnityEngine;
@@ -9,6 +10,7 @@ namespace TonyLearning.ShootingGame.Characters
     public class Character : MonoBehaviour
     {
         [SerializeField] GameObject deathVFX;
+        [SerializeField] private AudioData[] deathSFX;
         [Header("--- HEALTH ---")]
         [SerializeField]protected float maxHealth;
 
@@ -44,7 +46,7 @@ namespace TonyLearning.ShootingGame.Characters
         {
             health -= damage;
 
-            if (showOnHeadHealthBar)
+            if (showOnHeadHealthBar && gameObject.activeSelf)
             {
                 onHeadHealthBar.UpdateStatus(health,maxHealth);
             }
@@ -58,6 +60,7 @@ namespace TonyLearning.ShootingGame.Characters
         public virtual void Die()
         {
             health = 0f;
+            AudioManager.Instance.PlayRandomSFX(deathSFX);
             PoolManager.Release(deathVFX, transform.position);
             gameObject.SetActive(false);
         }

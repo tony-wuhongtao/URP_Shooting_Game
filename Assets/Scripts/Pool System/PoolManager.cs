@@ -6,6 +6,7 @@ namespace TonyLearning.ShootingGame.Pool_System
 {
     public class PoolManager : MonoBehaviour
     {
+        [SerializeField] Pool[] enemyPools;
         [SerializeField] Pool[] playerProjectilePools;
         [SerializeField] private Pool[] enemyProjectilePools;
         [SerializeField] private Pool[] vfxPools;
@@ -15,6 +16,8 @@ namespace TonyLearning.ShootingGame.Pool_System
         private void Awake()
         {
             _dictionary = new Dictionary<GameObject, Pool>();
+            
+            Initialize(enemyPools);
             Initialize(playerProjectilePools);
             Initialize(enemyProjectilePools);
             Initialize(vfxPools);
@@ -46,6 +49,7 @@ namespace TonyLearning.ShootingGame.Pool_System
         
         private void OnDestroy()
         {
+            CheckPoolSize(enemyPools);
             CheckPoolSize(playerProjectilePools);
             CheckPoolSize(enemyProjectilePools);
             CheckPoolSize(vfxPools);

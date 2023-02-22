@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Data.SqlTypes;
+using TonyLearning.ShootingGame.Audio;
 using TonyLearning.ShootingGame.Miscs;
 using TonyLearning.ShootingGame.Pool_System;
 using UnityEngine;
@@ -17,11 +18,22 @@ namespace TonyLearning.ShootingGame.Characters.Enemies
 
         [Header("--- FIRE ---")]
         [SerializeField] GameObject[] projectiles;
+
+        [SerializeField] private AudioData[] projectileLuanchSFX;
         [SerializeField] Transform muzzle;
 
         [SerializeField] private float minFireInterval, maxFireInterval;
 
+        private float maxMoveDistancePerFrame;
+        private WaitForFixedUpdate _waitForFixedUpdate = new WaitForFixedUpdate();
+
         private Vector3 targetPosition;
+
+        private void Awake()
+        {
+            maxMoveDistancePerFrame = moveSpeed * Time.fixedDeltaTime;
+        }
+
         private void OnEnable()
         {
             StartCoroutine(nameof(RandomlyMovingCoroutine));
@@ -45,9 +57,9 @@ namespace TonyLearning.ShootingGame.Characters.Enemies
                 //keep moving
                 //else
                 //set a new targetPosition
-                if (Vector3.Distance(transform.position, targetPosition) > Mathf.Epsilon)
+                if (Vector3.Distance(transform.position, targetPosition) >= maxMoveDistancePerFrame)
                 {
-                    transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+                    transform.position = Vector3.MoveTowards(transform.position, targetPosition, maxMoveDistancePerFrame);
                     transform.rotation =
                         Quaternion.AngleAxis((targetPosition - transform.position).normalized.y * moveRotationAngle,
                             Vector3.right);
@@ -58,7 +70,7 @@ namespace TonyLearning.ShootingGame.Characters.Enemies
                 }
                 
                 
-                yield return null;
+                yield return _waitForFixedUpdate;
             }
         }
 
@@ -72,6 +84,8 @@ namespace TonyLearning.ShootingGame.Characters.Enemies
                 {
                     PoolManager.Release(projectile, muzzle.position);
                 }
+                
+                AudioManager.Instance.PlayRandomSFX(projectileLuanchSFX);
             }
         }
     }

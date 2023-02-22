@@ -1,4 +1,5 @@
 using System;
+using TonyLearning.ShootingGame.Player;
 using UnityEngine;
 
 namespace TonyLearning.ShootingGame.Projectile
@@ -20,6 +21,12 @@ namespace TonyLearning.ShootingGame.Projectile
         private void OnDestroy()
         {
             trail.Clear();
+        }
+
+        protected override void OnCollisionEnter2D(Collision2D col)
+        {
+            base.OnCollisionEnter2D(col);
+            PlayerEnergy.Instance.ObtainEnergy(PlayerEnergy.PERCENT);
         }
     }
 }

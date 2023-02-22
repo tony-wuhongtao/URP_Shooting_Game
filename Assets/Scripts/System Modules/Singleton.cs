@@ -6,7 +6,7 @@ namespace TonyLearning.ShootingGame.System_Modules
     {
         public static T Instance { get; private set; }
 
-        protected void Awake()
+        protected virtual void Awake()
         {
             Instance = this as T;
         }

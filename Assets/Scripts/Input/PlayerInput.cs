@@ -14,6 +14,8 @@ namespace TonyLearning.ShootingGame.Input
         public event UnityAction onFire = delegate {  };
         public event UnityAction onStopFire = delegate {  }; 
         
+        public event UnityAction onDodge = delegate {  };
+        
         private InputActions _inputActions;
 
         private void OnEnable()
@@ -64,6 +66,14 @@ namespace TonyLearning.ShootingGame.Input
             if (context.canceled)
             {
                 onStopFire?.Invoke();
+            }
+        }
+
+        public void OnDodge(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                onDodge?.Invoke();
             }
         }
     }

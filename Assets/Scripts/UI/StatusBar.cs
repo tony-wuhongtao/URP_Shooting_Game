@@ -17,6 +17,7 @@ namespace TonyLearning.ShootingGame.UI
         [SerializeField] private float fillSpeed = 0.1f;
         private float currentFillAmount;
         protected float targetFillAmount;
+        private float previousFillAmount;
         private float t;
 
         private WaitForSeconds waitForDelayFill;
@@ -29,6 +30,11 @@ namespace TonyLearning.ShootingGame.UI
             _canvas.worldCamera = Camera.main;
             waitForDelayFill = new WaitForSeconds(fillDely);
 
+        }
+
+        private void OnDisable()
+        {
+            StopAllCoroutines();
         }
 
         public virtual void Initialize(float currentValue, float maxValue)
@@ -53,6 +59,7 @@ namespace TonyLearning.ShootingGame.UI
                 fillImageFront.fillAmount = targetFillAmount;
                 //slowly reduce fill image back fill amount
                 bufferedFillingCoroutine = StartCoroutine(BufferedFillingCoroutine(fillImageBack));
+                return;
             }
 
             if (currentFillAmount < targetFillAmount)
@@ -70,11 +77,13 @@ namespace TonyLearning.ShootingGame.UI
             {
                 yield return waitForDelayFill;
             }
+
+            previousFillAmount = currentFillAmount;
             t = 0f;
             while (t<1f)
             {
                 t += Time.deltaTime * fillSpeed;
-                currentFillAmount = Mathf.Lerp(currentFillAmount, targetFillAmount, t);
+                currentFillAmount = Mathf.Lerp(previousFillAmount, targetFillAmount, t);
                 image.fillAmount = currentFillAmount;
                 yield return null;
             }
