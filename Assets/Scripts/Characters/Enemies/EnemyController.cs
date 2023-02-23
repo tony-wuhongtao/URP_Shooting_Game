@@ -12,8 +12,6 @@ namespace TonyLearning.ShootingGame.Characters.Enemies
     public class EnemyController : MonoBehaviour
     {
         [Header("--- MOVE ---")] 
-        [SerializeField] private float paddingX; 
-        [SerializeField] private float paddingY;
         [SerializeField] float moveSpeed = 2f, moveRotationAngle = 25f;
 
         [Header("--- FIRE ---")]
@@ -24,14 +22,18 @@ namespace TonyLearning.ShootingGame.Characters.Enemies
 
         [SerializeField] private float minFireInterval, maxFireInterval;
 
-        private float maxMoveDistancePerFrame;
+        private float paddingX; 
+        private float paddingY;
+        
         private WaitForFixedUpdate _waitForFixedUpdate = new WaitForFixedUpdate();
 
         private Vector3 targetPosition;
 
         private void Awake()
         {
-            maxMoveDistancePerFrame = moveSpeed * Time.fixedDeltaTime;
+            var size = transform.GetChild(0).GetComponent<Renderer>().bounds.size;
+            paddingX = size.x / 2f;
+            paddingY = size.y / 2f;
         }
 
         private void OnEnable()
@@ -57,9 +59,9 @@ namespace TonyLearning.ShootingGame.Characters.Enemies
                 //keep moving
                 //else
                 //set a new targetPosition
-                if (Vector3.Distance(transform.position, targetPosition) >= maxMoveDistancePerFrame)
+                if (Vector3.Distance(transform.position, targetPosition) >= moveSpeed * Time.fixedDeltaTime)
                 {
-                    transform.position = Vector3.MoveTowards(transform.position, targetPosition, maxMoveDistancePerFrame);
+                    transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.fixedDeltaTime);
                     transform.rotation =
                         Quaternion.AngleAxis((targetPosition - transform.position).normalized.y * moveRotationAngle,
                             Vector3.right);

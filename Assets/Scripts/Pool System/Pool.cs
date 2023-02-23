@@ -7,19 +7,6 @@ namespace TonyLearning.ShootingGame.Pool_System
     [System.Serializable]
     public class Pool
     {
-        // public GameObject Prefab
-        // {
-        //     get
-        //     {
-        //         return prefab;
-        //     }
-        // }
-
-        // public GameObject Prefab
-        // {
-        //     get => prefab;
-        // }
-
         public GameObject Prefab => prefab;
 
         public int Size => size;

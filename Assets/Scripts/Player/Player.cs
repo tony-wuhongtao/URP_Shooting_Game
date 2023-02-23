@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using TonyLearning.ShootingGame.Audio;
 using TonyLearning.ShootingGame.Characters;
 using TonyLearning.ShootingGame.Input;
 using TonyLearning.ShootingGame.Miscs;
 using TonyLearning.ShootingGame.Pool_System;
+using TonyLearning.ShootingGame.System_Modules;
 using TonyLearning.ShootingGame.UI;
 using UnityEngine;
 
@@ -29,14 +31,12 @@ namespace TonyLearning.ShootingGame.Player
 
         [SerializeField] private float moveRotationAngle = 50f;
         
-        [SerializeField] private float paddingX = 0.2f;
-        [SerializeField] private float paddingY = 0.2f;
-
         [Header("--- FIRE ---")]
         [SerializeField] private GameObject projectile1;
         [SerializeField] private GameObject projectile2;
         [SerializeField] private GameObject projectile3;
-        
+        [SerializeField] private GameObject projectileOverdrive;
+
         [SerializeField] private Transform muzzleMiddle;
         [SerializeField] private Transform muzzleTop;
         [SerializeField] private Transform muzzleBottom;
@@ -59,6 +59,21 @@ namespace TonyLearning.ShootingGame.Player
 
         private float dodgeDurration;
 
+
+
+
+        [Header("--- OVERDRIVE ---")] 
+        [SerializeField]private float slowMotionDuration = 2f;
+        [SerializeField] private float keepMotionDuration = 3f;
+        [SerializeField]private int overdriveDodgeFactor = 2;
+        [SerializeField] private float overdriveSpeedFactor = 1.2f;
+        [SerializeField] private float overdriveFireFactor = 1.2f;
+
+        private float paddingX;
+        private float paddingY;
+        
+        private bool isOverdriving = false;
+
         float t;
         Vector2 previousVelocity;
         Quaternion previousRotation;
@@ -69,6 +84,7 @@ namespace TonyLearning.ShootingGame.Player
         private Collider2D _collider2D;
         
         WaitForSeconds waitForFireInterval;
+        private WaitForSeconds waitForOverdriveFireInterval;
         private WaitForSeconds waitHealthRegenerateTime;
 
         private Coroutine moveCoroutine;
@@ -78,15 +94,22 @@ namespace TonyLearning.ShootingGame.Player
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _collider2D = GetComponent<Collider2D>();
+
+            var size = transform.GetChild(0).GetComponent<Renderer>().bounds.size;
+            paddingX = size.x / 2f;
+            paddingY = size.y / 2f;
+            
             dodgeDurration = maxRoll / rollSpeed;
+            _rigidbody2D.gravityScale = 0f;
+      
+            waitForFireInterval = new WaitForSeconds(fireInterval);
+            waitHealthRegenerateTime = new WaitForSeconds(healthRegenerateTime);
+            waitForOverdriveFireInterval = new WaitForSeconds(fireInterval /= overdriveFireFactor);
+
         }
 
         private void Start()
         {
-            _rigidbody2D.gravityScale = 0f;
-            
-            waitForFireInterval = new WaitForSeconds(fireInterval);
-            waitHealthRegenerateTime = new WaitForSeconds(healthRegenerateTime);
             
             statusBar_HUD.Initialize(health, maxHealth);
             
@@ -94,12 +117,17 @@ namespace TonyLearning.ShootingGame.Player
             
         }
 
-
+        private void Update()
+        {
+            transform.position = ViewPort.Instance.PlayerMoveablePosition(transform.position, paddingX,paddingY);
+        }
 
         public override void TakeDamage(float damage)
         {
             base.TakeDamage(damage);
             statusBar_HUD.UpdateStatus(health, maxHealth);
+            
+            TimeController.Instance.BulletTime(slowMotionDuration);
             
             if (gameObject.activeSelf)
             {
@@ -135,15 +163,23 @@ namespace TonyLearning.ShootingGame.Player
             _input.onFire += Fire;
             _input.onStopFire += StopFire;
             _input.onDodge += Dodge;
+            _input.onOverDrive += Overdirive;
+
+            PlayerOverdrive.on += OverdriveOn;
+            PlayerOverdrive.off += OverdriveOff;
         }
 
-       private void OnDisable()
+        private void OnDisable()
         {
             _input.onMove -= Move;
             _input.onStopMove -= StopMove;
             _input.onFire -= Fire;
             _input.onStopFire -= StopFire;
             _input.onDodge -= Dodge;
+            _input.onOverDrive -= Overdirive;
+            
+            PlayerOverdrive.on -= OverdriveOn;
+            PlayerOverdrive.off -= OverdriveOff;
         }
 
        #region DODGE
@@ -168,6 +204,8 @@ namespace TonyLearning.ShootingGame.Player
 
            //Make player rotate along x axis x
            currentRoll = 0f;
+           
+           TimeController.Instance.BulletTime(slowMotionDuration,slowMotionDuration);
 
            var scale = transform.localScale;
            
@@ -221,7 +259,7 @@ namespace TonyLearning.ShootingGame.Player
             Quaternion moveRotation = Quaternion.AngleAxis(moveRotationAngle * moveInput.y, Vector3.right);
             
             moveCoroutine = StartCoroutine(MoveCoroutine(accelerationTime, moveInput.normalized * moveSpeed, moveRotation));
-            StartCoroutine(nameof(MovePositionLimitCoroutine));
+            // StartCoroutine(nameof(MovePositionLimitCoroutine));
         }
         
         private void StopMove()
@@ -235,7 +273,7 @@ namespace TonyLearning.ShootingGame.Player
                 StopCoroutine(moveCoroutine);
             }
             moveCoroutine = StartCoroutine(MoveCoroutine(decelerationTime, Vector2.zero, Quaternion.identity));
-            StopCoroutine(nameof(MovePositionLimitCoroutine));
+            // StopCoroutine(nameof(MovePositionLimitCoroutine));
         }
         
 
@@ -295,7 +333,6 @@ namespace TonyLearning.ShootingGame.Player
                 yield return null;
             }
         }
-        
         #endregion
 
         #region Fire
@@ -318,25 +355,65 @@ namespace TonyLearning.ShootingGame.Player
                 switch (weaponPower)
                 {
                     case 0:
-                        PoolManager.Release(projectile1, muzzleMiddle.position);
+                        PoolManager.Release(isOverdriving ? projectileOverdrive : projectile1, muzzleMiddle.position);
                         break;
                     case 1:
-                        PoolManager.Release(projectile1, muzzleTop.position);
-                        PoolManager.Release(projectile1, muzzleBottom.position);
+                        PoolManager.Release(isOverdriving ? projectileOverdrive : projectile1, muzzleTop.position);
+                        PoolManager.Release(isOverdriving ? projectileOverdrive : projectile1, muzzleBottom.position);
                         break;
                     case 2:
-                        PoolManager.Release(projectile1, muzzleMiddle.position);
-                        PoolManager.Release(projectile2, muzzleTop.position);
-                        PoolManager.Release(projectile3, muzzleBottom.position);
+                        PoolManager.Release(isOverdriving ? projectileOverdrive : projectile1, muzzleMiddle.position);
+                        PoolManager.Release(isOverdriving ? projectileOverdrive : projectile2, muzzleTop.position);
+                        PoolManager.Release(isOverdriving ? projectileOverdrive : projectile3, muzzleBottom.position);
                         break;
                     default:
                         break;
                 
                 }
                 AudioManager.Instance.PlayRandomSFX(AD_projectileSFX);
-                yield return waitForFireInterval;;
+                // yield return waitForFireInterval;
+                if (isOverdriving)
+                {
+                    yield return waitForOverdriveFireInterval;
+                }
+                else
+                {
+                    yield return waitForFireInterval;
+                }
             }
         }
+
+        // GameObject Projectile()
+        // {
+        //     return isOverdriving ? projectileOverdrive : projectile1;
+        // }
+
+        #endregion
+
+        #region OVERDRIVE
+        private void Overdirive()
+        {
+            if (!PlayerEnergy.Instance.IsEnoughEnergy(PlayerEnergy.MAX)) return;
+            
+            PlayerOverdrive.on.Invoke();
+        }
+        
+        private void OverdriveOn()
+        {
+            isOverdriving = true;
+            dodgeEnergyCost *= overdriveDodgeFactor;
+            moveSpeed *= overdriveSpeedFactor;
+            TimeController.Instance.BulletTime(slowMotionDuration, keepMotionDuration, slowMotionDuration);
+        }
+
+        private void OverdriveOff()
+        {
+            isOverdriving = false;
+            dodgeEnergyCost /= overdriveDodgeFactor;
+            moveSpeed /= overdriveSpeedFactor;
+        }
+
+
 
         #endregion
     }

@@ -17,14 +17,6 @@ namespace TonyLearning.ShootingGame.Projectile
         [SerializeField] protected Vector2 moveDirection;
 
         protected GameObject target;
-        IEnumerator MoveDirectly()
-        {
-            while (gameObject.activeSelf)
-            {
-                transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
-                yield return null;
-            }
-        }
 
         protected virtual void OnCollisionEnter2D(Collision2D col)
         {
@@ -43,5 +35,26 @@ namespace TonyLearning.ShootingGame.Projectile
         {
             StartCoroutine(MoveDirectly());
         }
+        
+        IEnumerator MoveDirectly()
+        {
+            while (gameObject.activeSelf)
+            {
+                Move();
+                yield return null;
+            }
+        }
+
+        protected void SetTarget(GameObject target)
+        {
+            this.target = target;
+        }
+
+        public void Move()
+        {
+            transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
+        }
+        
+        
     }
 }

@@ -16,6 +16,8 @@ namespace TonyLearning.ShootingGame.Input
         
         public event UnityAction onDodge = delegate {  };
         
+        public event UnityAction onOverDrive = delegate {  }; 
+
         private InputActions _inputActions;
 
         private void OnEnable()
@@ -74,6 +76,14 @@ namespace TonyLearning.ShootingGame.Input
             if (context.performed)
             {
                 onDodge?.Invoke();
+            }
+        }
+
+        public void OnOverdrive(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                onOverDrive?.Invoke();
             }
         }
     }

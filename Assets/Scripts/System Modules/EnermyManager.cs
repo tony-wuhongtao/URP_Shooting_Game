@@ -9,6 +9,7 @@ namespace TonyLearning.ShootingGame.System_Modules
 {
     public class EnermyManager : Singleton<EnermyManager>
     {
+        public GameObject RandomEnemy => enemyList.Count == 0 ? null : enemyList[Random.Range(0, enemyList.Count)];
         public int WaveNumber => waveNumber;
         public float TimeBetweenWaves => timeBetweenWaves;
         
@@ -35,12 +36,7 @@ namespace TonyLearning.ShootingGame.System_Modules
             enemyList = new List<GameObject>();
             waitTimeBetweenSpawns = new WaitForSeconds(timeBetweenSpawns);
             waitTimeBetweenWaves = new WaitForSeconds(timeBetweenWaves);
-            waitUntilNoEnemy = new WaitUntil(NoEnemy);
-        }
-
-        bool NoEnemy()
-        {
-            return enemyList.Count == 0;
+            waitUntilNoEnemy = new WaitUntil(() => enemyList.Count == 0);
         }
 
         IEnumerator Start()
