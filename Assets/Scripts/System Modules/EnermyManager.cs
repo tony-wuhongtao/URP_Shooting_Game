@@ -43,8 +43,6 @@ namespace TonyLearning.ShootingGame.System_Modules
         {
             while (spawnEnemy)
             {
-                yield return waitUntilNoEnemy;
-                
                 waveUI.SetActive(true);
                 yield return waitTimeBetweenWaves;
                 waveUI.SetActive(false);
@@ -66,7 +64,7 @@ namespace TonyLearning.ShootingGame.System_Modules
                 yield return waitTimeBetweenSpawns;
 
             }
-
+            yield return waitUntilNoEnemy;
             waveNumber++;
         }
 

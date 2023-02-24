@@ -22,12 +22,14 @@ namespace TonyLearning.ShootingGame.UI
 
         private WaitForSeconds waitForDelayFill;
         private Coroutine bufferedFillingCoroutine;
-        private Canvas _canvas;
 
         private void Awake()
         {
-            _canvas = GetComponent<Canvas>();
-            _canvas.worldCamera = Camera.main;
+            if (TryGetComponent<Canvas>(out Canvas canvas))
+            {
+                canvas.worldCamera = Camera.main;
+            }
+     
             waitForDelayFill = new WaitForSeconds(fillDely);
 
         }

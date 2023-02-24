@@ -13,12 +13,13 @@ namespace TonyLearning.ShootingGame.System_Modules
         private Color _color;
         
         private const string GAMEPLAY = "Gameplay";
+        private const string MAINMENU = "MainMenu";
         void Load(string sceneName)
         {
             SceneManager.LoadScene(sceneName);
         }
 
-        IEnumerator LoadCoroutine(string sceneName)
+        IEnumerator LoadingCoroutine(string sceneName)
         {
             var loadingOperation = SceneManager.LoadSceneAsync(sceneName);
             loadingOperation.allowSceneActivation = false;
@@ -30,6 +31,8 @@ namespace TonyLearning.ShootingGame.System_Modules
                 transitionImage.color = _color;
                 yield return null;
             }
+
+            yield return new WaitUntil((() => loadingOperation.progress >= 0.9f));
 
             loadingOperation.allowSceneActivation = true;
             
@@ -43,7 +46,14 @@ namespace TonyLearning.ShootingGame.System_Modules
         }
         public void LoadGameplayScene()
         {
-            StartCoroutine(LoadCoroutine(GAMEPLAY));
+            StopAllCoroutines();
+            StartCoroutine(LoadingCoroutine(GAMEPLAY));
+        }
+
+        public void LoadMainMainScene()
+        {
+            StopAllCoroutines();
+            StartCoroutine(LoadingCoroutine(MAINMENU));
         }
     }
 }

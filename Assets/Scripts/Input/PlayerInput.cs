@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 namespace TonyLearning.ShootingGame.Input
 {
 [CreateAssetMenu(menuName = ("Player Input"), fileName = (""))]
-    public class PlayerInput : ScriptableObject, InputActions.IGameplayActions
+    public class PlayerInput : ScriptableObject, InputActions.IGameplayActions, InputActions.IPauseMenuActions
     {
         public event UnityAction<Vector2> onMove = delegate(Vector2 arg0) {  };
         public event UnityAction onStopMove = delegate {  };
@@ -18,6 +18,9 @@ namespace TonyLearning.ShootingGame.Input
         
         public event UnityAction onOverDrive = delegate {  }; 
 
+        public event UnityAction onPause = delegate {  };
+        public event UnityAction onUnPause = delegate {  };
+        
         private InputActions _inputActions;
 
         private void OnEnable()
@@ -25,6 +28,7 @@ namespace TonyLearning.ShootingGame.Input
             _inputActions = new InputActions();
             
             _inputActions.Gameplay.SetCallbacks(this);
+            _inputActions.PauseMenu.SetCallbacks(this);
         }
 
         private void OnDisable()
@@ -32,17 +36,56 @@ namespace TonyLearning.ShootingGame.Input
             DisableAllInput();
         }
 
+        private void SwitchActionMap(InputActionMap actionMap, bool isUIInput)
+        {
+            _inputActions.Disable();
+            actionMap.Enable();
+
+            if (isUIInput)
+            {
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
+            }
+            else
+            {
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+        }
+
+        public void SwitchToDynamicUpdateMode()
+        {
+            InputSystem.settings.updateMode = InputSettings.UpdateMode.ProcessEventsInDynamicUpdate;
+        }
+        
+        public void SwitchToFixedUpdateMode()
+        {
+            InputSystem.settings.updateMode = InputSettings.UpdateMode.ProcessEventsInFixedUpdate;
+        }
+
         public void EnableGameplayInput()
         {
-            _inputActions.Gameplay.Enable();
-
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
+            SwitchActionMap(_inputActions.Gameplay, false);
         }
+
+        public void EnablePauseMenuInput()
+        {
+            SwitchActionMap(_inputActions.PauseMenu, true);
+        }
+        
+        // public void EnableGameplayInput()
+        // {
+        //     _inputActions.Gameplay.Enable();
+        //
+        //     Cursor.visible = false;
+        //     Cursor.lockState = CursorLockMode.Locked;
+        // }
 
         public void DisableAllInput()
         {
-            _inputActions.Gameplay.Disable();
+            // _inputActions.Gameplay.Disable();
+            // _inputActions.PauseMenu.Disable();
+            _inputActions.Disable();
         }
 
         public void OnMove(InputAction.CallbackContext context)
@@ -84,6 +127,22 @@ namespace TonyLearning.ShootingGame.Input
             if (context.performed)
             {
                 onOverDrive?.Invoke();
+            }
+        }
+
+        public void OnPause(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                onPause?.Invoke();
+            }
+        }
+
+        public void OnUnpause(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                onUnPause?.Invoke();
             }
         }
     }
