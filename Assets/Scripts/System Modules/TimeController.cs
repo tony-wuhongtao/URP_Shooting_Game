@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace TonyLearning.ShootingGame.System_Modules
 {
@@ -7,13 +8,26 @@ namespace TonyLearning.ShootingGame.System_Modules
     {
         [SerializeField,Range(0,1f)] private float bulletTimeScale = 0.1f;
 
+
         private float defaultFixedDeltaTime;
+        private float timeScaleBeforePause;
         private float t;
 
         protected override void Awake()
         {
             base.Awake();
             defaultFixedDeltaTime = Time.fixedDeltaTime;
+        }
+
+        public void Pause()
+        {
+            timeScaleBeforePause = Time.timeScale;
+            Time.timeScale = 0f;
+        }
+
+        public void Unpause()
+        {
+            Time.timeScale = timeScaleBeforePause;
         }
 
         public void BulletTime(float duration)
@@ -57,26 +71,32 @@ namespace TonyLearning.ShootingGame.System_Modules
         
 
         IEnumerator SlowOutCoroutine(float duration)
-        {
+        {   
             t = 0f;
             while (t < 1f)
             {
-                t += Time.unscaledDeltaTime / duration;
-                Time.timeScale = Mathf.Lerp(bulletTimeScale, 1f, t);
-                Time.fixedDeltaTime = defaultFixedDeltaTime * Time.timeScale;
+                if (GameManager.GameState != GameState.Paused)
+                {
+                    t += Time.unscaledDeltaTime / duration;
+                    Time.timeScale = Mathf.Lerp(bulletTimeScale, 1f, t);
+                    Time.fixedDeltaTime = defaultFixedDeltaTime * Time.timeScale;
+                }
 
                 yield return null;
             }
         }
         
         IEnumerator SlowInCoroutine(float duration)
-        {
+        {   
             t = 0f;
             while (t < 1f)
             {
-                t += Time.unscaledDeltaTime / duration;
-                Time.timeScale = Mathf.Lerp(1f,bulletTimeScale,  t);
-                Time.fixedDeltaTime = defaultFixedDeltaTime * Time.timeScale;
+                if (GameManager.GameState != GameState.Paused)
+                {
+                    t += Time.unscaledDeltaTime / duration;
+                    Time.timeScale = Mathf.Lerp(1f, bulletTimeScale, t);
+                    Time.fixedDeltaTime = defaultFixedDeltaTime * Time.timeScale;
+                }
 
                 yield return null;
             }

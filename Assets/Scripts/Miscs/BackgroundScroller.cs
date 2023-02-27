@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
+using TonyLearning.ShootingGame.System_Modules;
 using UnityEngine;
 
-namespace TonyLearning.ShootingGame
+namespace TonyLearning.ShootingGame.Miscs
 {
     public class BackgroundScroller : MonoBehaviour
     {
@@ -15,9 +15,18 @@ namespace TonyLearning.ShootingGame
             _material = GetComponent<Renderer>().material;
         }
 
-        private void Update()
+        // private void Update()
+        // {
+        //     _material.mainTextureOffset += scrollVelocity * Time.deltaTime;
+        // }
+
+        IEnumerator Start()
         {
-            _material.mainTextureOffset += scrollVelocity * Time.deltaTime;
+            while (GameManager.GameState != GameState.GameOver)
+            {
+                _material.mainTextureOffset += scrollVelocity * Time.deltaTime;
+                yield return null;
+            }
         }
     }
 }

@@ -90,10 +90,14 @@ namespace TonyLearning.ShootingGame.Player
         private Coroutine moveCoroutine;
         private Coroutine healthRegenerateCoroutine;
 
+
+        private MissileSystem missile;
+
         private void Awake()
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _collider2D = GetComponent<Collider2D>();
+            missile = GetComponent<MissileSystem>();
 
             var size = transform.GetChild(0).GetComponent<Renderer>().bounds.size;
             paddingX = size.x / 2f;
@@ -105,6 +109,8 @@ namespace TonyLearning.ShootingGame.Player
             waitForFireInterval = new WaitForSeconds(fireInterval);
             waitHealthRegenerateTime = new WaitForSeconds(healthRegenerateTime);
             waitForOverdriveFireInterval = new WaitForSeconds(fireInterval /= overdriveFireFactor);
+            
+            
 
         }
 
@@ -151,6 +157,7 @@ namespace TonyLearning.ShootingGame.Player
 
         public override void Die()
         {
+            GameManager.GameState = GameState.GameOver;
             statusBar_HUD.UpdateStatus(0f, maxHealth);
             base.Die();
         }
@@ -164,6 +171,7 @@ namespace TonyLearning.ShootingGame.Player
             _input.onStopFire += StopFire;
             _input.onDodge += Dodge;
             _input.onOverDrive += Overdirive;
+            _input.onLaunchMissile += LaunchMissile;
 
             PlayerOverdrive.on += OverdriveOn;
             PlayerOverdrive.off += OverdriveOff;
@@ -177,6 +185,7 @@ namespace TonyLearning.ShootingGame.Player
             _input.onStopFire -= StopFire;
             _input.onDodge -= Dodge;
             _input.onOverDrive -= Overdirive;
+            _input.onLaunchMissile -= LaunchMissile;
             
             PlayerOverdrive.on -= OverdriveOn;
             PlayerOverdrive.off -= OverdriveOff;
@@ -382,6 +391,11 @@ namespace TonyLearning.ShootingGame.Player
                 }
             }
         }
+        
+        private void LaunchMissile()
+        {
+            missile.Launch(muzzleMiddle);
+        }
 
         // GameObject Projectile()
         // {
@@ -413,7 +427,7 @@ namespace TonyLearning.ShootingGame.Player
             moveSpeed /= overdriveSpeedFactor;
         }
 
-
+        
 
         #endregion
     }

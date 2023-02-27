@@ -4,6 +4,7 @@ using System.Data.SqlTypes;
 using TonyLearning.ShootingGame.Audio;
 using TonyLearning.ShootingGame.Miscs;
 using TonyLearning.ShootingGame.Pool_System;
+using TonyLearning.ShootingGame.System_Modules;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -81,6 +82,8 @@ namespace TonyLearning.ShootingGame.Characters.Enemies
             while (gameObject.activeSelf)
             {
                 yield return new WaitForSeconds(Random.Range(minFireInterval, maxFireInterval));
+                
+                if(GameManager.GameState == GameState.GameOver) yield break;
 
                 foreach (var projectile in projectiles)
                 {

@@ -21,6 +21,8 @@ namespace TonyLearning.ShootingGame.Input
         public event UnityAction onPause = delegate {  };
         public event UnityAction onUnPause = delegate {  };
         
+        public event UnityAction onLaunchMissile = delegate {  };
+        
         private InputActions _inputActions;
 
         private void OnEnable()
@@ -145,5 +147,14 @@ namespace TonyLearning.ShootingGame.Input
                 onUnPause?.Invoke();
             }
         }
+        
+        public void OnLaunchMissile(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                onLaunchMissile?.Invoke();
+            }
+        }
+
     }
 }

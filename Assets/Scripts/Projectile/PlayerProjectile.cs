@@ -8,7 +8,7 @@ namespace TonyLearning.ShootingGame.Projectile
     {
         private TrailRenderer trail;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             trail = GetComponentInChildren<TrailRenderer>();
 

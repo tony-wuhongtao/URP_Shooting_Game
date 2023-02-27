@@ -1,11 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TonyLearning.ShootingGame.System_Modules;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace TonyLearning.ShootingGame
+namespace TonyLearning.ShootingGame.UI
 {
     public class MainMenuUIController : MonoBehaviour
     {
@@ -25,6 +22,7 @@ namespace TonyLearning.ShootingGame
         private void Start()
         {
             Time.timeScale = 1f;
+            GameManager.GameState = GameState.Playing;
         }
 
         void OnStartGameButtonClick()
