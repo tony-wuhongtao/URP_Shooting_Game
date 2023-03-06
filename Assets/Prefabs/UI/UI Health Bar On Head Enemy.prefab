@@ -85,7 +85,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &6585275532722637723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,8 +161,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 0d05702b6fcf8d94eb2bc38627826a3f, type: 2}
-  m_Color: {r: 0.9607843, g: 0.09411763, b: 0.79096097, a: 0.7176471}
+  m_Material: {fileID: 2100000, guid: bdd3e51c8a5c7cd43a1c6340e9bfda13, type: 2}
+  m_Color: {r: 0.8301887, g: 0.40256318, b: 0.6876468, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -237,8 +237,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: b16d15a2212d4c74db01b8ec4905a928, type: 2}
-  m_Color: {r: 0.18867922, g: 0.018511917, b: 0.17094253, a: 1}
+  m_Material: {fileID: 2100000, guid: bdd3e51c8a5c7cd43a1c6340e9bfda13, type: 2}
+  m_Color: {r: 0.9607843, g: 0.09411765, b: 0.7921569, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 0
+  m_FillAmount: 0.542
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0

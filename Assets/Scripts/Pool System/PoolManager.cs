@@ -10,6 +10,7 @@ namespace TonyLearning.ShootingGame.Pool_System
         [SerializeField] Pool[] playerProjectilePools;
         [SerializeField] private Pool[] enemyProjectilePools;
         [SerializeField] private Pool[] vfxPools;
+        [SerializeField] Pool[] lootItemPools;
 
         static Dictionary<GameObject, Pool> _dictionary;
         
@@ -21,6 +22,7 @@ namespace TonyLearning.ShootingGame.Pool_System
             Initialize(playerProjectilePools);
             Initialize(enemyProjectilePools);
             Initialize(vfxPools);
+            Initialize(lootItemPools);
         }
 
         void Initialize(Pool[] pools)
@@ -53,6 +55,7 @@ namespace TonyLearning.ShootingGame.Pool_System
             CheckPoolSize(playerProjectilePools);
             CheckPoolSize(enemyProjectilePools);
             CheckPoolSize(vfxPools);
+            CheckPoolSize(lootItemPools);
         }
 #endif
 

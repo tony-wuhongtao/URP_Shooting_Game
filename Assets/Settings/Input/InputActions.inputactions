@@ -376,6 +376,56 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "GameOver",
+            "id": "bcd65ec0-d1f1-4247-9ef3-1fe3f56ed136",
+            "actions": [
+                {
+                    "name": "ConfirmGameOver",
+                    "type": "Button",
+                    "id": "3257a82c-f4d8-4ab0-ad75-157707b8acce",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "6203b5ab-0562-44cc-8530-329df6eafe51",
+                    "path": "<Keyboard>/anyKey",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ConfirmGameOver",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fa348d9c-8236-482b-b41c-1ebee070d16f",
+                    "path": "<Mouse>/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ConfirmGameOver",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c7693229-52bd-4b8d-b211-bc1a73cf1014",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "ConfirmGameOver",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

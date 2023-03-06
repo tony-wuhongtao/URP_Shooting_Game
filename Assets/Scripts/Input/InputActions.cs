@@ -398,6 +398,56 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""GameOver"",
+            ""id"": ""bcd65ec0-d1f1-4247-9ef3-1fe3f56ed136"",
+            ""actions"": [
+                {
+                    ""name"": ""ConfirmGameOver"",
+                    ""type"": ""Button"",
+                    ""id"": ""3257a82c-f4d8-4ab0-ad75-157707b8acce"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""6203b5ab-0562-44cc-8530-329df6eafe51"",
+                    ""path"": ""<Keyboard>/anyKey"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ConfirmGameOver"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fa348d9c-8236-482b-b41c-1ebee070d16f"",
+                    ""path"": ""<Mouse>/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ConfirmGameOver"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c7693229-52bd-4b8d-b211-bc1a73cf1014"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC"",
+                    ""action"": ""ConfirmGameOver"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -435,6 +485,9 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         // PauseMenu
         m_PauseMenu = asset.FindActionMap("PauseMenu", throwIfNotFound: true);
         m_PauseMenu_Unpause = m_PauseMenu.FindAction("Unpause", throwIfNotFound: true);
+        // GameOver
+        m_GameOver = asset.FindActionMap("GameOver", throwIfNotFound: true);
+        m_GameOver_ConfirmGameOver = m_GameOver.FindAction("ConfirmGameOver", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -596,6 +649,39 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         }
     }
     public PauseMenuActions @PauseMenu => new PauseMenuActions(this);
+
+    // GameOver
+    private readonly InputActionMap m_GameOver;
+    private IGameOverActions m_GameOverActionsCallbackInterface;
+    private readonly InputAction m_GameOver_ConfirmGameOver;
+    public struct GameOverActions
+    {
+        private @InputActions m_Wrapper;
+        public GameOverActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @ConfirmGameOver => m_Wrapper.m_GameOver_ConfirmGameOver;
+        public InputActionMap Get() { return m_Wrapper.m_GameOver; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(GameOverActions set) { return set.Get(); }
+        public void SetCallbacks(IGameOverActions instance)
+        {
+            if (m_Wrapper.m_GameOverActionsCallbackInterface != null)
+            {
+                @ConfirmGameOver.started -= m_Wrapper.m_GameOverActionsCallbackInterface.OnConfirmGameOver;
+                @ConfirmGameOver.performed -= m_Wrapper.m_GameOverActionsCallbackInterface.OnConfirmGameOver;
+                @ConfirmGameOver.canceled -= m_Wrapper.m_GameOverActionsCallbackInterface.OnConfirmGameOver;
+            }
+            m_Wrapper.m_GameOverActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @ConfirmGameOver.started += instance.OnConfirmGameOver;
+                @ConfirmGameOver.performed += instance.OnConfirmGameOver;
+                @ConfirmGameOver.canceled += instance.OnConfirmGameOver;
+            }
+        }
+    }
+    public GameOverActions @GameOver => new GameOverActions(this);
     private int m_PCSchemeIndex = -1;
     public InputControlScheme PCScheme
     {
@@ -617,5 +703,9 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
     public interface IPauseMenuActions
     {
         void OnUnpause(InputAction.CallbackContext context);
+    }
+    public interface IGameOverActions
+    {
+        void OnConfirmGameOver(InputAction.CallbackContext context);
     }
 }

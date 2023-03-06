@@ -37,6 +37,8 @@ namespace TonyLearning.ShootingGame.Player
         [SerializeField] private GameObject projectile3;
         [SerializeField] private GameObject projectileOverdrive;
 
+        [SerializeField] private ParticleSystem muzzleVFX;
+
         [SerializeField] private Transform muzzleMiddle;
         [SerializeField] private Transform muzzleTop;
         [SerializeField] private Transform muzzleBottom;
@@ -60,7 +62,12 @@ namespace TonyLearning.ShootingGame.Player
         private float dodgeDurration;
 
 
+        #region PROPERTIES
 
+        public bool IsFullHealth => health == maxHealth;
+        public bool IsFullPower => weaponPower == 2;
+
+        #endregion
 
         [Header("--- OVERDRIVE ---")] 
         [SerializeField]private float slowMotionDuration = 2f;
@@ -69,12 +76,15 @@ namespace TonyLearning.ShootingGame.Player
         [SerializeField] private float overdriveSpeedFactor = 1.2f;
         [SerializeField] private float overdriveFireFactor = 1.2f;
 
+        [SerializeField] readonly float InvincibleTime = 1f;
         private float paddingX;
         private float paddingY;
         
         private bool isOverdriving = false;
 
         float t;
+
+        private Vector2 moveDirection;
         Vector2 previousVelocity;
         Quaternion previousRotation;
 
@@ -86,6 +96,10 @@ namespace TonyLearning.ShootingGame.Player
         WaitForSeconds waitForFireInterval;
         private WaitForSeconds waitForOverdriveFireInterval;
         private WaitForSeconds waitHealthRegenerateTime;
+        
+        WaitForSeconds waitDecelerationTime;
+        
+        WaitForSeconds waitInvincibleTime;
 
         private Coroutine moveCoroutine;
         private Coroutine healthRegenerateCoroutine;
@@ -109,8 +123,10 @@ namespace TonyLearning.ShootingGame.Player
             waitForFireInterval = new WaitForSeconds(fireInterval);
             waitHealthRegenerateTime = new WaitForSeconds(healthRegenerateTime);
             waitForOverdriveFireInterval = new WaitForSeconds(fireInterval /= overdriveFireFactor);
-            
-            
+            waitDecelerationTime = new WaitForSeconds(decelerationTime);
+            waitInvincibleTime = new WaitForSeconds(InvincibleTime);
+
+
 
         }
 
@@ -131,12 +147,15 @@ namespace TonyLearning.ShootingGame.Player
         public override void TakeDamage(float damage)
         {
             base.TakeDamage(damage);
+            PowerDown();
             statusBar_HUD.UpdateStatus(health, maxHealth);
             
             TimeController.Instance.BulletTime(slowMotionDuration);
             
             if (gameObject.activeSelf)
             {
+                Move(moveDirection);
+                StartCoroutine(InvincibleCoroutine());
                 if (regenerateHealth)
                 {
                     if(healthRegenerateCoroutine != null)
@@ -157,11 +176,20 @@ namespace TonyLearning.ShootingGame.Player
 
         public override void Die()
         {
+            GameManager.onGameOver?.Invoke();
             GameManager.GameState = GameState.GameOver;
             statusBar_HUD.UpdateStatus(0f, maxHealth);
             base.Die();
         }
 
+        IEnumerator InvincibleCoroutine()
+        {
+            _collider2D.isTrigger = true;
+
+            yield return waitInvincibleTime;
+
+            _collider2D.isTrigger = false;
+        }
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -259,15 +287,19 @@ namespace TonyLearning.ShootingGame.Player
             //
             // _rigidbody2D.velocity = moveAmount;
             // StartCoroutine(StartMoveCoroutine((moveInput.normalized * moveSpeed)));
+            
+            
 
             if (moveCoroutine != null)
             {
                 StopCoroutine(moveCoroutine);
             }
 
+            moveDirection = moveInput.normalized;
             Quaternion moveRotation = Quaternion.AngleAxis(moveRotationAngle * moveInput.y, Vector3.right);
             
-            moveCoroutine = StartCoroutine(MoveCoroutine(accelerationTime, moveInput.normalized * moveSpeed, moveRotation));
+            moveCoroutine = StartCoroutine(MoveCoroutine(accelerationTime, moveDirection * moveSpeed, moveRotation));
+            StopCoroutine(nameof(DecelerationCoroutine));
             // StartCoroutine(nameof(MovePositionLimitCoroutine));
         }
         
@@ -281,8 +313,10 @@ namespace TonyLearning.ShootingGame.Player
             {
                 StopCoroutine(moveCoroutine);
             }
+            moveDirection = Vector2.zero;
             moveCoroutine = StartCoroutine(MoveCoroutine(decelerationTime, Vector2.zero, Quaternion.identity));
             // StopCoroutine(nameof(MovePositionLimitCoroutine));
+            StartCoroutine(nameof(DecelerationCoroutine));
         }
         
 
@@ -334,7 +368,7 @@ namespace TonyLearning.ShootingGame.Player
             //     yield return null;
             // }
         }
-        IEnumerator MovePositionLimitCoroutine()
+        IEnumerator MoveRangeLimatationCoroutine()
         {
             while (true)
             {
@@ -342,18 +376,27 @@ namespace TonyLearning.ShootingGame.Player
                 yield return null;
             }
         }
+        
+        IEnumerator DecelerationCoroutine()
+        {
+            yield return waitDecelerationTime;
+        
+            StopCoroutine(nameof(MoveRangeLimatationCoroutine));
+        }
         #endregion
 
         #region Fire
         
         private void Fire()
         {
+            muzzleVFX.Play();
             StartCoroutine(nameof(FireCoroutine));
 
         }
         
         private void StopFire()
         {
+            muzzleVFX.Stop();
             StopCoroutine(nameof(FireCoroutine));
         }
 
@@ -391,10 +434,18 @@ namespace TonyLearning.ShootingGame.Player
                 }
             }
         }
+        #endregion
+        
+        #region MISSILE
         
         private void LaunchMissile()
         {
             missile.Launch(muzzleMiddle);
+        }
+        
+        public void PickUpMissile()
+        {
+            missile.PickUp();
         }
 
         // GameObject Projectile()
@@ -430,5 +481,28 @@ namespace TonyLearning.ShootingGame.Player
         
 
         #endregion
+        
+        #region WEAPON POWER
+
+        public void PowerUp()
+        {
+            weaponPower = Mathf.Min(++weaponPower, 2);
+        }
+
+        void PowerDown()
+        {
+            //* 写法1
+            // weaponPower--;
+            // weaponPower = Mathf.Clamp(weaponPower, 0, 2);
+            //* 写法2
+            // weaponPower = Mathf.Max(weaponPower - 1, 0);
+            //* 写法3
+            // weaponPower = Mathf.Clamp(weaponPower, --weaponPower, 0);
+            //* 写法4
+            weaponPower = Mathf.Max(--weaponPower, 0);
+        }
+
+        #endregion
+        
     }
 }

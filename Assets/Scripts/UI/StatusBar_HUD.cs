@@ -7,11 +7,12 @@ namespace TonyLearning.ShootingGame.UI
 {
     public class StatusBar_HUD : StatusBar
     {
-        [SerializeField] private Text percentText;
+        [SerializeField] protected Text percentText;
 
-        void SetPercentText()
+        protected virtual void SetPercentText()
         {
-            percentText.text = Mathf.RoundToInt(targetFillAmount * 100f) + "%";
+            // percentText.text = Mathf.RoundToInt(targetFillAmount * 100f) + "%";
+            percentText.text = targetFillAmount.ToString("P0");
         }
 
         public override void Initialize(float currentValue, float maxValue)

@@ -2,11 +2,12 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
 
 namespace TonyLearning.ShootingGame.Input
 {
 [CreateAssetMenu(menuName = ("Player Input"), fileName = (""))]
-    public class PlayerInput : ScriptableObject, InputActions.IGameplayActions, InputActions.IPauseMenuActions
+    public class PlayerInput : ScriptableObject, InputActions.IGameplayActions, InputActions.IPauseMenuActions, InputActions.IGameOverActions
     {
         public event UnityAction<Vector2> onMove = delegate(Vector2 arg0) {  };
         public event UnityAction onStopMove = delegate {  };
@@ -22,6 +23,7 @@ namespace TonyLearning.ShootingGame.Input
         public event UnityAction onUnPause = delegate {  };
         
         public event UnityAction onLaunchMissile = delegate {  };
+        public event UnityAction onConfirmGameOver = delegate {  };
         
         private InputActions _inputActions;
 
@@ -31,6 +33,7 @@ namespace TonyLearning.ShootingGame.Input
             
             _inputActions.Gameplay.SetCallbacks(this);
             _inputActions.PauseMenu.SetCallbacks(this);
+            _inputActions.GameOver.SetCallbacks(this);
         }
 
         private void OnDisable()
@@ -47,6 +50,7 @@ namespace TonyLearning.ShootingGame.Input
             {
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
+                
             }
             else
             {
@@ -74,6 +78,8 @@ namespace TonyLearning.ShootingGame.Input
         {
             SwitchActionMap(_inputActions.PauseMenu, true);
         }
+
+        public void EnableGameOverInput() => SwitchActionMap(_inputActions.GameOver, false);
         
         // public void EnableGameplayInput()
         // {
@@ -156,5 +162,12 @@ namespace TonyLearning.ShootingGame.Input
             }
         }
 
+        public void OnConfirmGameOver(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                onConfirmGameOver?.Invoke();
+            }
+        }
     }
 }

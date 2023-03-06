@@ -52,6 +52,17 @@ namespace TonyLearning.ShootingGame.Player
             }
         }
 
+        public void PickUp()
+        {
+            amount++;
+            MissileDisplay.UpdateAmountText(amount);
+
+            if (amount == 1)
+            {
+                MissileDisplay.UpdateCooldownImage(0f);
+                isReady = true;
+            }
+        }
         IEnumerator CooldownCoroutine()
         {
             var cooldownValue = cooldownTime;

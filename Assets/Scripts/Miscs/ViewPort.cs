@@ -6,9 +6,11 @@ namespace TonyLearning.ShootingGame.Miscs
 {
     public class ViewPort : Singleton<ViewPort>
     {
-        private float minX, maxX, minY, maxY;
+        float minX, maxX, minY, maxY;
 
         private float middleX;
+
+        public float MaxX => maxX;
 
         private void Start()
         {

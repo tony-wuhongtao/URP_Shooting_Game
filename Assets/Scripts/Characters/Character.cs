@@ -44,9 +44,10 @@ namespace TonyLearning.ShootingGame.Characters
 
         public virtual void TakeDamage(float damage)
         {
+            if(health == 0f) return;
             health -= damage;
 
-            if (showOnHeadHealthBar && gameObject.activeSelf)
+            if (showOnHeadHealthBar)
             {
                 onHeadHealthBar.UpdateStatus(health,maxHealth);
             }

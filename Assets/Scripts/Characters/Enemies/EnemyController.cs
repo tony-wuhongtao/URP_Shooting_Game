@@ -16,28 +16,29 @@ namespace TonyLearning.ShootingGame.Characters.Enemies
         [SerializeField] float moveSpeed = 2f, moveRotationAngle = 25f;
 
         [Header("--- FIRE ---")]
-        [SerializeField] GameObject[] projectiles;
+        [SerializeField] protected GameObject[] projectiles;
 
-        [SerializeField] private AudioData[] projectileLuanchSFX;
-        [SerializeField] Transform muzzle;
+        [SerializeField] protected AudioData[] projectileLuanchSFX;
+        [SerializeField] protected Transform muzzle;
+        [SerializeField] protected ParticleSystem muzzleVFX;
 
-        [SerializeField] private float minFireInterval, maxFireInterval;
+        [SerializeField] protected float minFireInterval, maxFireInterval;
 
-        private float paddingX; 
+        protected float paddingX; 
         private float paddingY;
         
         private WaitForFixedUpdate _waitForFixedUpdate = new WaitForFixedUpdate();
 
-        private Vector3 targetPosition;
+        public Vector3 targetPosition;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             var size = transform.GetChild(0).GetComponent<Renderer>().bounds.size;
             paddingX = size.x / 2f;
             paddingY = size.y / 2f;
         }
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             StartCoroutine(nameof(RandomlyMovingCoroutine));
             StartCoroutine(nameof(RandomlyFireCoroutine));
@@ -77,7 +78,7 @@ namespace TonyLearning.ShootingGame.Characters.Enemies
             }
         }
 
-        IEnumerator RandomlyFireCoroutine()
+        protected virtual IEnumerator RandomlyFireCoroutine()
         {
             while (gameObject.activeSelf)
             {
@@ -91,6 +92,7 @@ namespace TonyLearning.ShootingGame.Characters.Enemies
                 }
                 
                 AudioManager.Instance.PlayRandomSFX(projectileLuanchSFX);
+                muzzleVFX.Play();
             }
         }
     }

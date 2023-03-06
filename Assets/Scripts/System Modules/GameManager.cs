@@ -4,6 +4,7 @@ namespace TonyLearning.ShootingGame.System_Modules
 {
     public class GameManager : Singleton<GameManager>
     {
+        public static System.Action onGameOver;
         public static GameState GameState
         {
             get => Instance._gameState;
@@ -17,5 +18,6 @@ namespace TonyLearning.ShootingGame.System_Modules
         Playing,
         Paused,
         GameOver,
+        Scoring,
     }
 }

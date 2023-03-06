@@ -20,6 +20,11 @@ namespace TonyLearning.ShootingGame.System_Modules
         [SerializeField] private float timeBetweenWaves = 1f;
         [SerializeField] private int minEnemyAmount = 4;
         [SerializeField] private int maxEnemyAmount = 10;
+        
+        [Header("---- Boss Settings ----")]
+        [SerializeField] GameObject bossPrefab;
+        [SerializeField] int bossWaveNumber;
+        
 
         int waveNumber = 1;
         int enemyAmount;
@@ -41,7 +46,7 @@ namespace TonyLearning.ShootingGame.System_Modules
 
         IEnumerator Start()
         {
-            while (spawnEnemy)
+            while (spawnEnemy && GameManager.GameState != GameState.GameOver)
             {
                 waveUI.SetActive(true);
                 yield return waitTimeBetweenWaves;
@@ -53,17 +58,26 @@ namespace TonyLearning.ShootingGame.System_Modules
 
         IEnumerator RandomlySpawnCoroutine()
         {
-            enemyAmount = Mathf.Clamp(enemyAmount, minEnemyAmount + waveNumber / 3, maxEnemyAmount);
-
-            for (int i = 0; i < enemyAmount; i++)
+            if (waveNumber % bossWaveNumber == 0)
             {
-                // var enemy = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
-                // PoolManager.Release(enemy);
-                enemyList.Add( PoolManager.Release(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]));
-
-                yield return waitTimeBetweenSpawns;
-
+                var boss = PoolManager.Release(bossPrefab);
+                enemyList.Add(boss);
             }
+            else
+            {
+                enemyAmount = Mathf.Clamp(enemyAmount, minEnemyAmount + waveNumber / bossWaveNumber, maxEnemyAmount);
+
+                for (int i = 0; i < enemyAmount; i++)
+                {
+                    // var enemy = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+                    // PoolManager.Release(enemy);
+                    enemyList.Add( PoolManager.Release(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]));
+
+                    yield return waitTimeBetweenSpawns;
+
+                }
+            }
+            
             yield return waitUntilNoEnemy;
             waveNumber++;
         }

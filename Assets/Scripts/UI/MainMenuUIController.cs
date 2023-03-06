@@ -6,28 +6,51 @@ namespace TonyLearning.ShootingGame.UI
 {
     public class MainMenuUIController : MonoBehaviour
     {
-        [SerializeField] private Button buttonStartGame;
+        [Header("--- Canvas ---")]
+        [SerializeField] private Canvas mainMenuCanvas;
+        [Header("--- Buttons ---")]
+        [SerializeField] private Button buttonStart;
+        [SerializeField] private Button buttonOptions;
+        [SerializeField] private Button buttonQuit;
 
 
         private void OnEnable()
         {
-            buttonStartGame.onClick.AddListener(OnStartGameButtonClick);
+            ButtonPressedBehaviour.buttonFuntionTable.Add(buttonStart.gameObject.name, OnStartGameButtonClick);
+            ButtonPressedBehaviour.buttonFuntionTable.Add(buttonOptions.gameObject.name, OnOptionsClicked);
+            ButtonPressedBehaviour.buttonFuntionTable.Add(buttonQuit.gameObject.name, OnQuitClicked);
         }
 
         private void OnDisable()
         {
-            buttonStartGame.onClick.RemoveAllListeners();
+            ButtonPressedBehaviour.buttonFuntionTable.Clear();
         }
 
         private void Start()
         {
             Time.timeScale = 1f;
             GameManager.GameState = GameState.Playing;
+            UIInput.Instance.SelectUI(buttonStart);
         }
 
         void OnStartGameButtonClick()
         {
+            mainMenuCanvas.enabled = false;
             SceneLoader.Instance.LoadGameplayScene();
+        }
+
+        void OnOptionsClicked()
+        {
+            UIInput.Instance.SelectUI(buttonOptions);
+        }
+
+        void OnQuitClicked()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
     }
 }
