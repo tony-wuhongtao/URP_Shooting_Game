@@ -42,6 +42,7 @@ namespace TonyLearning.ShootingGame.UI
         void OnOptionsClicked()
         {
             UIInput.Instance.SelectUI(buttonOptions);
+            SceneLoader.Instance.LoadOptionsScene();
         }
 
         void OnQuitClicked()

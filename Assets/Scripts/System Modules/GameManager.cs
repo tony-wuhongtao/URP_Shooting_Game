@@ -19,5 +19,6 @@ namespace TonyLearning.ShootingGame.System_Modules
         Paused,
         GameOver,
         Scoring,
+        Options,
     }
 }

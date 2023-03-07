@@ -15,6 +15,7 @@ namespace TonyLearning.ShootingGame.System_Modules
         private const string GAMEPLAY = "Gameplay";
         private const string MAINMENU = "MainMenu";
         private const string SCORING = "Scoring";
+        private const string OPTIONS = "Options";
         void Load(string sceneName)
         {
             SceneManager.LoadScene(sceneName);
@@ -61,6 +62,12 @@ namespace TonyLearning.ShootingGame.System_Modules
         {
             StopAllCoroutines();
             StartCoroutine(LoadingCoroutine(SCORING));
+        }
+        
+        public void LoadOptionsScene()
+        {
+            StopAllCoroutines();
+            StartCoroutine(LoadingCoroutine(OPTIONS));
         }
     }
 }

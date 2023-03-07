@@ -2089,7 +2089,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 522638701928472283, guid: 52ea6b1a25faa2e488ee6ea09dee3cbe, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 522638701928472283, guid: 52ea6b1a25faa2e488ee6ea09dee3cbe, type: 3}
       propertyPath: m_AnchorMin.x
@@ -2097,7 +2097,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 522638701928472283, guid: 52ea6b1a25faa2e488ee6ea09dee3cbe, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 522638701928472283, guid: 52ea6b1a25faa2e488ee6ea09dee3cbe, type: 3}
       propertyPath: m_SizeDelta.x
@@ -2137,11 +2137,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 522638701928472283, guid: 52ea6b1a25faa2e488ee6ea09dee3cbe, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 522638701928472283, guid: 52ea6b1a25faa2e488ee6ea09dee3cbe, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -155
       objectReference: {fileID: 0}
     - target: {fileID: 522638701928472283, guid: 52ea6b1a25faa2e488ee6ea09dee3cbe, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2162,6 +2162,10 @@ PrefabInstance:
     - target: {fileID: 7419625244764404042, guid: 52ea6b1a25faa2e488ee6ea09dee3cbe, type: 3}
       propertyPath: m_Name
       value: Button Options
+      objectReference: {fileID: 0}
+    - target: {fileID: 7419625244764404042, guid: 52ea6b1a25faa2e488ee6ea09dee3cbe, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7771572382222712295, guid: 52ea6b1a25faa2e488ee6ea09dee3cbe, type: 3}
       propertyPath: submitSFX.audioClip
@@ -4124,6 +4128,10 @@ PrefabInstance:
     - target: {fileID: 522638701928472283, guid: 52ea6b1a25faa2e488ee6ea09dee3cbe, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1242458948655424067, guid: 52ea6b1a25faa2e488ee6ea09dee3cbe, type: 3}
+      propertyPath: m_Text
+      value: Resume
       objectReference: {fileID: 0}
     - target: {fileID: 2646721851030218642, guid: 52ea6b1a25faa2e488ee6ea09dee3cbe, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
