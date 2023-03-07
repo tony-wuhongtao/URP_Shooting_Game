@@ -54,8 +54,8 @@ namespace TonyLearning.ShootingGame.Input
             }
             else
             {
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
+                // Cursor.visible = false;
+                // Cursor.lockState = CursorLockMode.Locked;
             }
         }
 

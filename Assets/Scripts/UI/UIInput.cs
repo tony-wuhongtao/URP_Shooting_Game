@@ -17,21 +17,21 @@ namespace TonyLearning.ShootingGame.UI
         protected override void Awake()
         {
             base.Awake();
-            UIInputModule = GetComponent<InputSystemUIInputModule>();
-            UIInputModule.enabled = false;
+            // UIInputModule = GetComponent<InputSystemUIInputModule>();
+            // UIInputModule.enabled = false;
         }
 
         public void SelectUI(Selectable UIObject)
         {
-            UIObject.Select();
-            UIObject.OnSelect(null);
-            UIInputModule.enabled = true;
+            // UIObject.Select();
+            // UIObject.OnSelect(null);
+            // UIInputModule.enabled = true;
         }
 
         public void DisableAllUIInputs()
         {
-            _playerInput.DisableAllInput();
-            UIInputModule.enabled = false;
+            // _playerInput.DisableAllInput();
+            // UIInputModule.enabled = false;
         }
     }
 }

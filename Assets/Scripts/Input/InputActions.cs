@@ -88,7 +88,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""id"": ""05e7fac5-3c63-4200-86e8-baf909270d1d"",
                     ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
-                    ""processors"": """",
+                    ""processors"": ""NormalizeVector2"",
                     ""groups"": """",
                     ""action"": ""Move"",
                     ""isComposite"": false,
@@ -98,17 +98,6 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""feb2c683-b225-4d52-badb-83e7e4fc37ef"",
                     ""path"": ""<Gamepad>/dpad"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""95aee9dc-83be-4bb1-a6f0-de5ab803ccc3"",
-                    ""path"": ""<AndroidGamepad>/leftStick"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -239,8 +228,8 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""59dbbb6d-d254-44d2-93d4-a63bb31355be"",
-                    ""path"": ""<Mouse>/leftButton"",
+                    ""id"": ""149bdfa1-485f-457c-b530-c92c48ad5af4"",
+                    ""path"": ""<Touchscreen>/touch0/press"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -396,6 +385,17 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""action"": ""Unpause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e0d6a0f1-bd56-48c5-8d15-134ec88773bf"",
+                    ""path"": ""<Touchscreen>/touch4/tap"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Unpause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -443,6 +443,17 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""PC"",
+                    ""action"": ""ConfirmGameOver"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bfa4fbc2-2c2e-4ac7-83e4-a74f5cbb5029"",
+                    ""path"": ""<Touchscreen>/Press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
                     ""action"": ""ConfirmGameOver"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false

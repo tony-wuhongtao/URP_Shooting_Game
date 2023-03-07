@@ -203,7 +203,7 @@ GameObject:
   - component: {fileID: 2752999851504662249}
   - component: {fileID: 7771572382222712295}
   m_Layer: 0
-  m_Name: Button
+  m_Name: Button PC
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -304,9 +304,9 @@ MonoBehaviour:
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
-    m_HighlightedTrigger: Selected
+    m_HighlightedTrigger: Normal
     m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
+    m_SelectedTrigger: Normal
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 8112899651010945136}
@@ -345,9 +345,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ec79f070922ebc41933d0095ae400ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectSFX:
-    audioClip: {fileID: 8300000, guid: dc641f65cf098b14ca02ef2fb5e71102, type: 3}
-    volume: 1
   submitSFX:
     audioClip: {fileID: 8300000, guid: 0b225f85e360f3e449af6df12ff5e0ec, type: 3}
     volume: 1
